@@ -120,8 +120,8 @@ func New(ip string) *ViewSonic {
 }
 
 // Close closes the connection to the projector and stops the reconnect loop.
-func (c *ViewSonic) Close() {
-	c.cancelContext()
+func (conn *ViewSonic) Close() {
+	conn.cancelContext()
 }
 
 const (
@@ -137,20 +137,20 @@ const (
 // It is responsible for locking the connection, sending the packet, and parsing the response.
 // If any network error occurs, it triggers a reconnect and returns the error.
 // The caller is responsible for retrying the command if necessary.
-func (c *ViewSonic) tx(cmd1 uint8, data []byte) (uint8, []byte, error) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+func (conn *ViewSonic) tx(cmd1 uint8, data []byte) (uint8, []byte, error) {
+	conn.mutex.Lock()
+	defer conn.mutex.Unlock()
 
-	if c.conn == nil {
+	if conn.conn == nil {
 		// If connection is not available, trigger a reconnect and return an error immediately.
 		select {
-		case c.triggerReconnect <- struct{}{}:
+		case conn.triggerReconnect <- struct{}{}:
 		default:
 		}
 		return 0, nil, fmt.Errorf("connection not established")
 	}
 
-	return tx(c.conn, c.triggerReconnect, cmd1, data)
+	return tx(conn.conn, conn.triggerReconnect, cmd1, data)
 }
 
 func tx(conn net.Conn, triggerReconnect chan struct{}, cmd1 uint8, data []byte) (uint8, []byte, error) {
@@ -230,8 +230,8 @@ func checkSum(data ...[]byte) byte {
 // Write sends a write command to the projector.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (c *ViewSonic) Write(command uint16, value uint8) error {
-	cmd1, data, err := c.tx(cmdWrite, []byte{0x34, byte(command >> 8), byte(command), value})
+func (conn *ViewSonic) Write(command uint16, value uint8) error {
+	cmd1, data, err := conn.tx(cmdWrite, []byte{0x34, byte(command >> 8), byte(command), value})
 	if err != nil {
 		return err
 	}
@@ -244,8 +244,8 @@ func (c *ViewSonic) Write(command uint16, value uint8) error {
 }
 
 // WriteKey is a specialized version of Write for Remote Key commands such as Menu, Enter, etc.
-func (c *ViewSonic) WriteKey(command uint16, value uint8) error {
-	cmd1, data, err := c.tx(cmdWriteKey, []byte{0x34, byte(command >> 8), byte(command), value})
+func (conn *ViewSonic) WriteKey(command uint16, value uint8) error {
+	cmd1, data, err := conn.tx(cmdWriteKey, []byte{0x34, byte(command >> 8), byte(command), value})
 	if err != nil {
 		return err
 	}
@@ -260,8 +260,8 @@ func (c *ViewSonic) WriteKey(command uint16, value uint8) error {
 // Read sends a read command to the projector and returns a single byte.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (c *ViewSonic) Read(command uint16) (uint8, error) {
-	cmd1, data, err := c.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
+func (conn *ViewSonic) Read(command uint16) (uint8, error) {
+	cmd1, data, err := conn.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
 	if err != nil {
 		return 0, err
 	}
@@ -276,8 +276,8 @@ func (c *ViewSonic) Read(command uint16) (uint8, error) {
 // Read2Bytes sends a read command and returns two bytes as an int16.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (c *ViewSonic) Read2Bytes(command uint16) (int16, error) {
-	cmd1, data, err := c.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
+func (conn *ViewSonic) Read2Bytes(command uint16) (int16, error) {
+	cmd1, data, err := conn.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
 	if err != nil {
 		return 0, err
 	}
@@ -292,8 +292,8 @@ func (c *ViewSonic) Read2Bytes(command uint16) (int16, error) {
 // ReadNBytes sends a read command and returns N bytes of data.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (c *ViewSonic) ReadNBytes(command uint16) ([]byte, error) {
-	cmd1, data, err := c.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
+func (conn *ViewSonic) ReadNBytes(command uint16) ([]byte, error) {
+	cmd1, data, err := conn.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
 	if err != nil {
 		return nil, err
 	}
