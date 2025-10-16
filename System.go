@@ -17,8 +17,8 @@ type ProjectorStatusValue uint8
 
 const (
 	ProjectorStatusPowerOff ProjectorStatusValue = 0x00
-	ProjectorStatusPowerOn  ProjectorStatusValue = 0x01
-	ProjectorStatusWarmUp   ProjectorStatusValue = 0x02
+	ProjectorStatusWarmUp   ProjectorStatusValue = 0x01
+	ProjectorStatusPowerOn  ProjectorStatusValue = 0x02
 	ProjectorStatusCoolDown ProjectorStatusValue = 0x03
 )
 
