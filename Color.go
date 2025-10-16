@@ -68,6 +68,9 @@ func (conn *ViewSonic) SelectPrimaryColor(color PrimaryColor) error {
 	return conn.Write(0x1210, uint8(color)) // PDF #93-98
 }
 
+// GetSelectedPrimaryColor returns inconsistent results use with caution.
+// The documentation states that the Generic Read Return is 1 byte longer then the documentet
+// values. However, testing indicates that its most of the time a 2 byte Read Returns some data.
 func (conn *ViewSonic) GetSelectedPrimaryColor() (PrimaryColor, error) {
 	val, err := conn.Read2Bytes(0x1210) // PDF #99
 	return PrimaryColor(val), err
