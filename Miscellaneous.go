@@ -7,7 +7,7 @@ import (
 
 // High Altitude Mode
 func (conn *ViewSonic) SetHighAltitudeMode(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
@@ -21,7 +21,7 @@ func (conn *ViewSonic) GetHighAltitudeMode() (bool, error) {
 
 // Message
 func (conn *ViewSonic) SetMessageDisplay(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
@@ -34,7 +34,7 @@ func (conn *ViewSonic) GetMessageDisplay() (bool, error) {
 }
 
 // Language
-type Language uint8
+type Language int8
 
 const (
 	LanguageEnglish     Language = 0x00
@@ -62,7 +62,7 @@ const (
 )
 
 func (conn *ViewSonic) SetLanguage(lang Language) error {
-	return conn.Write(0x1500, uint8(lang)) // PDF #141-162
+	return conn.Write(0x1500, int8(lang)) // PDF #141-162
 }
 
 func (conn *ViewSonic) GetLanguage() (Language, error) {
@@ -71,19 +71,19 @@ func (conn *ViewSonic) GetLanguage() (Language, error) {
 }
 
 // Remote Control Code (1-8)
-func (conn *ViewSonic) SetRemoteControlCode(code uint8) error {
+func (conn *ViewSonic) SetRemoteControlCode(code int8) error {
 	if code < 1 || code > 8 {
 		return fmt.Errorf("remote code must be between 1 and 8")
 	}
-	return conn.Write(0x0C48, code-1) // PDF #190-197: code 1 is value 0
+	return conn.Write(0x0C48, int8(code-1)) // PDF #190-197: code 1 is value 0
 }
-func (conn *ViewSonic) GetRemoteControlCode() (uint8, error) {
+func (conn *ViewSonic) GetRemoteControlCode() (int8, error) {
 	val, err := conn.Read(0x0C48) // PDF #198
 	return val + 1, err
 }
 
 // Remote Key
-type RemoteKey uint8
+type RemoteKey int8
 
 const (
 	RemoteKeyMenu     RemoteKey = 0x0F
@@ -120,7 +120,7 @@ func (conn *ViewSonic) GetLightSourceUsageTime() (uint32, error) {
 	return binary.LittleEndian.Uint32(data[2:]), nil
 }
 
-type LightSourceMode uint8
+type LightSourceMode int8
 
 const (
 	LightSourceModeNormal     LightSourceMode = 0x00
@@ -130,7 +130,7 @@ const (
 )
 
 func (conn *ViewSonic) SetLightSourceMode(mode LightSourceMode) error {
-	return conn.Write(0x1110, uint8(mode)) // PDF #19-22
+	return conn.Write(0x1110, int8(mode)) // PDF #19-22
 }
 
 func (conn *ViewSonic) GetLightSourceMode() (LightSourceMode, error) {

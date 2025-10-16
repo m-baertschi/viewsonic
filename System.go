@@ -6,14 +6,14 @@ import (
 )
 
 // Power and Status
-type PowerState uint8
+type PowerState int8
 
 const (
 	PowerStateOn  PowerState = 0x01
 	PowerStateOff PowerState = 0x00
 )
 
-type ProjectorStatusValue uint8
+type ProjectorStatusValue int8
 
 const (
 	ProjectorStatusPowerOff ProjectorStatusValue = 0x00
@@ -56,7 +56,7 @@ func (conn *ViewSonic) ResetCurrentColorSettings() error {
 
 // Quick Power Off
 func (conn *ViewSonic) SetQuickPowerOff(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
@@ -69,7 +69,7 @@ func (conn *ViewSonic) GetQuickPowerOff() (bool, error) {
 }
 
 // Error status
-type LampModeStatus uint8
+type LampModeStatus int8
 
 const (
 	LampModeStatusStandby                    LampModeStatus = 0x00

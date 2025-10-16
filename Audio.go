@@ -2,7 +2,7 @@ package viewsonic
 
 // Mute
 func (conn *ViewSonic) SetMute(mute bool) error {
-	value := uint8(0x00) // OFF
+	value := int8(0x00) // OFF
 	if mute {
 		value = 0x01 // ON
 	}
@@ -26,14 +26,11 @@ func (conn *ViewSonic) DecreaseVolume() error {
 	return conn.Write(0x1402, 0x00) // PDF #138
 }
 
-func (conn *ViewSonic) SetVolume(level uint8) error {
-	if level > 20 {
-		level = 20 // Max value seems to be 20
-	}
+func (conn *ViewSonic) SetVolume(level int8) error {
 	return conn.Write(0x132A, level) // PDF #139
 }
 
-func (conn *ViewSonic) GetVolume() (uint8, error) {
+func (conn *ViewSonic) GetVolume() (int8, error) {
 	return conn.Read(0x1403) // PDF #140
 }
 

@@ -235,8 +235,8 @@ func checkSum(data ...[]byte) byte {
 // Write sends a write command to the projector.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (conn *ViewSonic) Write(command uint16, value uint8) error {
-	cmd1, data, err := conn.tx(cmdWrite, []byte{0x34, byte(command >> 8), byte(command), value})
+func (conn *ViewSonic) Write(command uint16, value int8) error {
+	cmd1, data, err := conn.tx(cmdWrite, []byte{0x34, byte(command >> 8), byte(command), byte(value)})
 	if err != nil {
 		return err
 	}
@@ -273,7 +273,7 @@ func (conn *ViewSonic) WriteKey(command uint16, value uint8) error {
 // Read sends a read command to the projector and returns a single byte.
 // If the connection is down, it will return an error. The background process is responsible for reconnecting.
 // The caller may choose to retry the command after a short delay.
-func (conn *ViewSonic) Read(command uint16) (uint8, error) {
+func (conn *ViewSonic) Read(command uint16) (int8, error) {
 	cmd1, data, err := conn.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
 	if err != nil {
 		return 0, err
@@ -287,7 +287,7 @@ func (conn *ViewSonic) Read(command uint16) (uint8, error) {
 		return 0, fmt.Errorf("unexpected response command: 0x%02X, %x", cmd1, data)
 	}
 
-	return data[2], nil
+	return int8(data[2]), nil
 }
 
 // Read2Bytes sends a read command and returns two bytes as an int16.

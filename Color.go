@@ -1,7 +1,7 @@
 package viewsonic
 
 // Color temperature
-type ColorTemperature uint8
+type ColorTemperature int8
 
 const (
 	ColorTemperatureWarm    ColorTemperature = 0x00
@@ -11,7 +11,7 @@ const (
 )
 
 func (conn *ViewSonic) SetColorTemperature(temp ColorTemperature) error {
-	return conn.Write(0x1208, uint8(temp)) // PDF #66-69
+	return conn.Write(0x1208, int8(temp)) // PDF #66-69
 }
 
 func (conn *ViewSonic) GetColorTemperature() (ColorTemperature, error) {
@@ -20,7 +20,7 @@ func (conn *ViewSonic) GetColorTemperature() (ColorTemperature, error) {
 }
 
 // Color mode
-type ColorMode uint8
+type ColorMode int8
 
 const (
 	ColorModeBrightest     ColorMode = 0x00
@@ -40,7 +40,7 @@ const (
 )
 
 func (conn *ViewSonic) SetColorMode(mode ColorMode) error {
-	return conn.Write(0x120B, uint8(mode)) // PDF #80-90
+	return conn.Write(0x120B, int8(mode)) // PDF #80-90
 }
 
 func (conn *ViewSonic) GetColorMode() (ColorMode, error) {
@@ -53,7 +53,7 @@ func (conn *ViewSonic) CycleColorMode() error {
 }
 
 // Primary Color
-type PrimaryColor uint8
+type PrimaryColor int8
 
 const (
 	PrimaryColorR PrimaryColor = 0x00
@@ -65,7 +65,7 @@ const (
 )
 
 func (conn *ViewSonic) SelectPrimaryColor(color PrimaryColor) error {
-	return conn.Write(0x1210, uint8(color)) // PDF #93-98
+	return conn.Write(0x1210, int8(color)) // PDF #93-98
 }
 
 // GetSelectedPrimaryColor returns inconsistent results use with caution.
@@ -122,19 +122,19 @@ func (conn *ViewSonic) GetGain() (int16, error) {
 
 // Brilliant Color
 // SetBrilliantColor sets the brilliant color level (0-10)
-func (conn *ViewSonic) SetBrilliantColor(level uint8) error {
+func (conn *ViewSonic) SetBrilliantColor(level int8) error {
 	if level > 10 {
 		level = 10
 	}
 	// PDF #178-188: Brilliant Color OFF is value 0, Color 1 is value 1, etc.
 	return conn.Write(0x120F, level)
 }
-func (conn *ViewSonic) GetBrilliantColor() (uint8, error) {
+func (conn *ViewSonic) GetBrilliantColor() (int8, error) {
 	return conn.Read(0x120F) // PDF #189
 }
 
 // Screen Color
-type ScreenColor uint8
+type ScreenColor int8
 
 const (
 	ScreenColorOff        ScreenColor = 0x00
@@ -145,7 +145,7 @@ const (
 )
 
 func (conn *ViewSonic) SetScreenColor(color ScreenColor) error {
-	return conn.Write(0x1132, uint8(color)) // PDF #199-203
+	return conn.Write(0x1132, int8(color)) // PDF #199-203
 }
 func (conn *ViewSonic) GetScreenColor() (ScreenColor, error) {
 	val, err := conn.Read(0x1132) // PDF #204

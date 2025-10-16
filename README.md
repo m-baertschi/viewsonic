@@ -2,6 +2,9 @@
 
 This library provides functionality to communicate with ViewSonic projectors using the RS-232 protocol as specified in the v1.19 documentation.
 
+This library was tested against a ViewSonic LS920WU projector. Please note that in power off mode, all commands except for power will fail. In power on mode, more commands work, but still most fail.
+A valid source must be connected to the projector for most commands to work.
+
 ## **ViewSonic Projector RS-232 Command Parsing**
 
 This document outlines how to structure and parse command packets for communicating with ViewSonic projectors via the RS-232 protocol, based on the v1.19 specification.

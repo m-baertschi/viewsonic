@@ -1,7 +1,7 @@
 package viewsonic
 
 // Source input
-type SourceInput uint8
+type SourceInput int8
 
 const (
 	SourceInputDSub1      SourceInput = 0x00
@@ -22,7 +22,7 @@ const (
 )
 
 func (conn *ViewSonic) SetSourceInput(input SourceInput) error {
-	return conn.Write(0x1301, uint8(input)) // PDF #115-129
+	return conn.Write(0x1301, int8(input)) // PDF #115-129
 }
 
 func (conn *ViewSonic) GetSourceInput() (SourceInput, error) {
@@ -35,7 +35,7 @@ func (conn *ViewSonic) GetSourceInput() (SourceInput, error) {
 
 // Quick Auto Search
 func (conn *ViewSonic) SetQuickAutoSearch(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
@@ -48,7 +48,7 @@ func (conn *ViewSonic) GetQuickAutoSearch() (bool, error) {
 }
 
 // HDMI Format
-type HdmiFormat uint8
+type HdmiFormat int8
 
 const (
 	HdmiFormatRGB  HdmiFormat = 0x00
@@ -57,7 +57,7 @@ const (
 )
 
 func (conn *ViewSonic) SetHdmiFormat(format HdmiFormat) error {
-	return conn.Write(0x1128, uint8(format)) // PDF #166-168
+	return conn.Write(0x1128, int8(format)) // PDF #166-168
 }
 func (conn *ViewSonic) GetHdmiFormat() (HdmiFormat, error) {
 	val, err := conn.Read(0x1128) // PDF #169
@@ -65,7 +65,7 @@ func (conn *ViewSonic) GetHdmiFormat() (HdmiFormat, error) {
 }
 
 // Hdmi Range
-type HdmiRange uint8
+type HdmiRange int8
 
 const (
 	HdmiRangeEnhanced HdmiRange = 0x00 // 0-255
@@ -74,7 +74,7 @@ const (
 )
 
 func (conn *ViewSonic) SetHdmiRange(r HdmiRange) error {
-	return conn.Write(0x1129, uint8(r)) // PDF #170-172
+	return conn.Write(0x1129, int8(r)) // PDF #170-172
 }
 func (conn *ViewSonic) GetHdmiRange() (HdmiRange, error) {
 	val, err := conn.Read(0x1129) // PDF #173
@@ -83,7 +83,7 @@ func (conn *ViewSonic) GetHdmiRange() (HdmiRange, error) {
 
 // HDMI CEC
 func (conn *ViewSonic) SetCEC(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
@@ -96,26 +96,26 @@ func (conn *ViewSonic) GetCEC() (bool, error) {
 
 // Image Position
 func (conn *ViewSonic) ShiftHorizontalPosition(right bool) error {
-	value := uint8(0x00) // Left
+	value := int8(0x00) // Left
 	if right {
 		value = 0x01
 	}
 	return conn.Write(0x1206, value) // PDF #60, 61
 }
 
-func (conn *ViewSonic) GetHorizontalPosition() (uint8, error) {
+func (conn *ViewSonic) GetHorizontalPosition() (int8, error) {
 	return conn.Read(0x1206) // PDF #62
 }
 
 func (conn *ViewSonic) ShiftVerticalPosition(up bool) error {
-	value := uint8(0x00) // Up
-	if !up {             // down
+	value := int8(0x00) // Up
+	if !up {            // down
 		value = 0x01
 	}
 	return conn.Write(0x1207, value) // PDF #63, 64
 }
 
-func (conn *ViewSonic) GetVerticalPosition() (uint8, error) {
+func (conn *ViewSonic) GetVerticalPosition() (int8, error) {
 	return conn.Read(0x1207) // PDF #65
 }
 
@@ -128,7 +128,7 @@ func (conn *ViewSonic) DecreaseKeystoneVertical() error {
 	return conn.Write(0x120A, 0x00) // PDF #74
 }
 
-func (conn *ViewSonic) GetKeystoneVertical() (uint8, error) {
+func (conn *ViewSonic) GetKeystoneVertical() (int8, error) {
 	return conn.Read(0x120A) // PDF #76
 }
 
@@ -140,6 +140,6 @@ func (conn *ViewSonic) DecreaseKeystoneHorizontal() error {
 	return conn.Write(0x1131, 0x00) // PDF #77
 }
 
-func (conn *ViewSonic) GetKeystoneHorizontal() (uint8, error) {
+func (conn *ViewSonic) GetKeystoneHorizontal() (int8, error) {
 	return conn.Read(0x1131) // PDF #79
 }

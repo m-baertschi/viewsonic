@@ -1,7 +1,7 @@
 package viewsonic
 
 // Splash Screen
-type SplashScreen uint8
+type SplashScreen int8
 
 const (
 	SplashScreenBlack     SplashScreen = 0x00
@@ -12,10 +12,7 @@ const (
 )
 
 func (conn *ViewSonic) SetSplashScreen(screen SplashScreen) error {
-	if screen == SplashScreenCapture {
-		return conn.Write(0x110A, uint8(screen)) // PDF #10
-	}
-	return conn.Write(0x110A, uint8(screen)) // PDF #7,8,9,11
+	return conn.Write(0x110A, int8(screen))
 }
 
 func (conn *ViewSonic) GetSplashScreen() (SplashScreen, error) {
@@ -27,7 +24,7 @@ func (conn *ViewSonic) GetSplashScreen() (SplashScreen, error) {
 }
 
 // Projector Position
-type ProjectorPosition uint8
+type ProjectorPosition int8
 
 const (
 	ProjectorPositionFrontTable   ProjectorPosition = 0x00
@@ -37,7 +34,7 @@ const (
 )
 
 func (conn *ViewSonic) SetProjectorPosition(pos ProjectorPosition) error {
-	return conn.Write(0x1200, uint8(pos)) // PDF #27-30
+	return conn.Write(0x1200, int8(pos)) // PDF #27-30
 }
 
 func (conn *ViewSonic) GetProjectorPosition() (ProjectorPosition, error) {
@@ -75,7 +72,7 @@ func (conn *ViewSonic) GetBrightness() (int16, error) {
 }
 
 // Aspect ratio
-type AspectRatio uint8
+type AspectRatio int8
 
 const (
 	AspectRatioAuto       AspectRatio = 0x00
@@ -90,7 +87,7 @@ const (
 )
 
 func (conn *ViewSonic) SetAspectRatio(ratio AspectRatio) error {
-	return conn.Write(0x1204, uint8(ratio)) // PDF #48-56
+	return conn.Write(0x1204, int8(ratio)) // PDF #48-56
 }
 
 func (conn *ViewSonic) GetAspectRatio() (AspectRatio, error) {
@@ -112,7 +109,7 @@ func (conn *ViewSonic) AutoAdjust() error {
 
 // Blank
 func (conn *ViewSonic) SetBlank(blank bool) error {
-	value := uint8(0x00) // Off
+	value := int8(0x00) // Off
 	if blank {
 		value = 0x01 // On
 	}
@@ -126,7 +123,7 @@ func (conn *ViewSonic) GetBlank() (bool, error) {
 
 // Freeze
 func (conn *ViewSonic) SetFreeze(freeze bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if freeze {
 		value = 0x01
 	}
@@ -139,18 +136,18 @@ func (conn *ViewSonic) GetFreeze() (bool, error) {
 }
 
 // Over Scan (0-5)
-func (conn *ViewSonic) SetOverScan(value uint8) error {
+func (conn *ViewSonic) SetOverScan(value int8) error {
 	if value > 5 {
 		value = 5
 	}
 	return conn.Write(0x1133, value) // PDF #205-210
 }
-func (conn *ViewSonic) GetOverScan() (uint8, error) {
+func (conn *ViewSonic) GetOverScan() (int8, error) {
 	return conn.Read(0x1133) // PDF #211
 }
 
 // 3D Sync Mode
-type ThreeDSyncMode uint8
+type ThreeDSyncMode int8
 
 const (
 	ThreeDSyncOff             ThreeDSyncMode = 0x00
@@ -162,7 +159,7 @@ const (
 )
 
 func (conn *ViewSonic) SetThreeDSyncMode(mode ThreeDSyncMode) error {
-	return conn.Write(0x1220, uint8(mode)) // PDF #32-37
+	return conn.Write(0x1220, int8(mode)) // PDF #32-37
 }
 
 func (conn *ViewSonic) GetThreeDSyncMode() (ThreeDSyncMode, error) {
@@ -174,7 +171,7 @@ func (conn *ViewSonic) GetThreeDSyncMode() (ThreeDSyncMode, error) {
 }
 
 func (conn *ViewSonic) SetThreeDSyncInvert(enable bool) error {
-	value := uint8(0x00)
+	value := int8(0x00)
 	if enable {
 		value = 0x01
 	}
