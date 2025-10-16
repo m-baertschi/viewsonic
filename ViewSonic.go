@@ -307,7 +307,7 @@ func (conn *ViewSonic) Read2Bytes(command uint16) (int16, error) {
 		return 0, fmt.Errorf("unexpected response command: 0x%02X, %x", cmd1, data)
 	}
 
-	return int16(binary.LittleEndian.Uint16(data[1:3])), nil
+	return int16(binary.LittleEndian.Uint16(data[2:4])), nil
 }
 
 // ReadNBytes sends a read command and returns N bytes of data.

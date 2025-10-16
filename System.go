@@ -135,6 +135,14 @@ func (conn *ViewSonic) GetErrorStatus() (*ErrorStatus, error) {
 		return nil, fmt.Errorf("not enough data for error status, expected 24 bytes, got %d", len(data))
 	}
 
+	lampModeStatus := LampModeStatus(data[21])
+	switch lampModeStatus {
+	case 0x01, 0x02, 0x03:
+		lampModeStatus = LampModeStatusIgnition
+	case 0x09, 0x0C:
+		lampModeStatus = LampModeStatusPreHeatingPhase
+	}
+
 	status := &ErrorStatus{
 		LampFailCount:               data[0],
 		LampLitErrorCount:           data[1],
@@ -154,7 +162,7 @@ func (conn *ViewSonic) GetErrorStatus() (*ErrorStatus, error) {
 		UART1ErrorCount:             data[15],
 		AbnormalPowerdown:           data[16],
 		FirstBurnInErrorMinute:      binary.LittleEndian.Uint32(data[17:21]),
-		LampStatus:                  LampModeStatus(data[21]),
+		LampStatus:                  lampModeStatus,
 		LampErrorStatus:             LampModeErrorStatus(binary.LittleEndian.Uint16(data[22:24])),
 	}
 
@@ -162,15 +170,16 @@ func (conn *ViewSonic) GetErrorStatus() (*ErrorStatus, error) {
 }
 
 // Temperature status
-func (conn *ViewSonic) GetOperatingTemperature() (float32, error) {
+func (conn *ViewSonic) GetOperatingTemperature() (float32, float32, error) {
 	data, err := conn.ReadNBytes(0x1503) // PDF #223
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 	if len(data) < 4 {
-		return 0, fmt.Errorf("not enough data for temperature")
+		return 0, 0, fmt.Errorf("not enough data for temperature")
 	}
 	// Note 1: HEX2DEC(ddccbbaa)/10
-	val := binary.LittleEndian.Uint32(data)
-	return float32(val) / 10.0, nil
+	val := binary.LittleEndian.Uint32(data[2:])
+	val2 := binary.LittleEndian.Uint32(data[6:])
+	return float32(val) / 10.0, float32(val2) / 10.0, nil
 }

@@ -117,7 +117,7 @@ func (conn *ViewSonic) GetLightSourceUsageTime() (uint32, error) {
 		return 0, fmt.Errorf("not enough data for usage time")
 	}
 	// Note 4: HEX2DEC(ddccbbaa)
-	return binary.LittleEndian.Uint32(data), nil
+	return binary.LittleEndian.Uint32(data[2:]), nil
 }
 
 type LightSourceMode uint8

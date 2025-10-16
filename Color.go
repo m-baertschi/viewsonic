@@ -69,7 +69,7 @@ func (conn *ViewSonic) SelectPrimaryColor(color PrimaryColor) error {
 }
 
 func (conn *ViewSonic) GetSelectedPrimaryColor() (PrimaryColor, error) {
-	val, err := conn.Read(0x1210) // PDF #99
+	val, err := conn.Read2Bytes(0x1210) // PDF #99
 	return PrimaryColor(val), err
 }
 
