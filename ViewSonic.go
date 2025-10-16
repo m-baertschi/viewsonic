@@ -13,6 +13,11 @@ import (
 	"github.com/jpillora/backoff"
 )
 
+// ErrFunctionDisabled is returned when the projector indicates that a function is disabled (greyed out).
+// This typically occurs when there are no source inputs to the projector, making certain functions
+// like "Aspect Ratio" unavailable via OSD menu or remote control.
+var ErrFunctionDisabled = fmt.Errorf("function is disabled (greyed out) on the projector")
+
 // ViewSonic is a connection to the projector. It is designed to be thread-safe.
 // It automatically handles reconnects in the background.
 type ViewSonic struct {
@@ -236,6 +241,10 @@ func (conn *ViewSonic) Write(command uint16, value uint8) error {
 		return err
 	}
 
+	if cmd1 == cmdError {
+		return ErrFunctionDisabled
+	}
+
 	if cmd1 != cmdWriteResponse || len(data) != 0 {
 		return fmt.Errorf("unexpected response command: 0x%02X, %x", cmd1, data)
 	}
@@ -248,6 +257,10 @@ func (conn *ViewSonic) WriteKey(command uint16, value uint8) error {
 	cmd1, data, err := conn.tx(cmdWriteKey, []byte{0x34, byte(command >> 8), byte(command), value})
 	if err != nil {
 		return err
+	}
+
+	if cmd1 == cmdError {
+		return ErrFunctionDisabled
 	}
 
 	if cmd1 != cmdWriteResponse || len(data) != 0 {
@@ -266,6 +279,10 @@ func (conn *ViewSonic) Read(command uint16) (uint8, error) {
 		return 0, err
 	}
 
+	if cmd1 == cmdError {
+		return 0, ErrFunctionDisabled
+	}
+
 	if cmd1 != cmdReadResponse || len(data) != 3 {
 		return 0, fmt.Errorf("unexpected response command: 0x%02X, %x", cmd1, data)
 	}
@@ -282,7 +299,11 @@ func (conn *ViewSonic) Read2Bytes(command uint16) (int16, error) {
 		return 0, err
 	}
 
-	if cmd1 != cmdReadResponse || len(data) != 3 {
+	if cmd1 == cmdError {
+		return 0, ErrFunctionDisabled
+	}
+
+	if cmd1 != cmdReadResponse || len(data) != 4 {
 		return 0, fmt.Errorf("unexpected response command: 0x%02X, %x", cmd1, data)
 	}
 
@@ -296,6 +317,10 @@ func (conn *ViewSonic) ReadNBytes(command uint16) ([]byte, error) {
 	cmd1, data, err := conn.tx(cmdRead, []byte{0x34, 0x00, 0x00, byte(command >> 8), byte(command)})
 	if err != nil {
 		return nil, err
+	}
+
+	if cmd1 == cmdError {
+		return nil, ErrFunctionDisabled
 	}
 
 	if cmd1 != cmdReadResponse {
